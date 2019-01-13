@@ -1,0 +1,23 @@
+#Set mysql root password before install
+- name: Specify MySQL root password before installing
+  debconf: name='mysql-server' question='mysql-server/root_password' value='{{mysql_root_password | quote}}' vtype='password'
+  become: true
+
+- name: Confirm MySQL root password before installing
+  debconf: name='mysql-server' question='mysql-server/root_password_again' value='{{mysql_root_password | quote}}' vtype='password'
+  become: true
+
+#Install lamp stack
+- name: Install mysql and php mysql
+  apt: name={{ item }} state=present update_cache=yes   #Item comes from with_items
+  with_items:
+    - mysql-server
+    - php-mysql
+  become: true
+
+#Start up mysql and apache
+- name: Start mysql
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - mysql
+  become: true

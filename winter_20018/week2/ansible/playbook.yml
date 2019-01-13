@@ -1,0 +1,15 @@
+- hosts: lamp
+  remote_user: "ubuntu"
+  gather_facts: false
+  vars_files:    
+    - vars.yml
+  vars:
+    #ansible_ssh_private_key_file: "/path/to/id_rsa"    #If you are using ssh keys for auth
+    ansible_user: "ubuntu"
+    ansible_ssh_pass: "ubuntu"
+    ansible_host_key_checking: false
+    ansible_sudo_pass: "ubuntu"
+  roles:
+    - { role : defaults}
+    - { role : apache2php}
+    - { role : mysql}

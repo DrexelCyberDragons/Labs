@@ -1,0 +1,62 @@
+#Install lamp stack
+- name: Install apache and php
+  apt: name={{ item }} state=present update_cache=yes   #Item comes from with_items
+  with_items:
+    - apache2
+    - php
+    - libapache2-mod-php
+  become: true
+
+#Make php first in dir.conf
+- name: Copy a new dir.conf file into place, backing up the original if it differs from the copied version
+  copy:
+    src: files/dir.conf
+    dest: /etc/apache2/mods-available/dir.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  become: true
+
+#Create empty .htaccess file
+- name: ensure .htaccess file exists
+  copy:
+    content: ""
+    dest: /var/www/html/.htaccess
+    force: no
+    group: root
+    owner: root
+    mode: 0644
+  become: true
+
+#Copy over the index.php file over to the server
+- name: Deploy index.php
+  copy:
+    src: files/index.php
+    dest: /var/www/html/index.php
+  become: true
+
+#Create a test directory in web server
+- name: Creates directory
+  file:
+    path: /var/www/html/test/
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+  become: true
+
+#Create a symlink to passwords
+- name: Create symbolic link to passwords file
+  file:
+    src: /etc/passwd
+    dest: /var/www/html/test/passwords
+    state: link
+  become: true
+
+#Restart apache
+- name: Restart service apache, in all cases
+  service:
+    name: apache2
+    state: restarted
+  become: true

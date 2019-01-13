@@ -1,0 +1,37 @@
+#This will update the packages and upgrade the distro and become root to do it
+- name : Upgrade distro #Name can be anythingn
+  apt:
+    upgrade: dist       #What to install
+    update_cache: yes   #Do update first
+  become: true
+
+- name: Install defaults
+  apt:
+    name: ['git', 'vim', 'tmux', 'curl', 'python', 'python3', 'python-pip', 'python3-pip', 'build-essential', 'apt-transport-https', 'net-tools']   #Can install multiple with name and putting packages in the list
+    state: present  #Ensure desired packages are installed
+  become: true
+
+#Insert things into a file
+#- name: insert/update "Match User" configuration block in /etc/ssh/sshd_config
+#  blockinfile:
+#    path: /etc/ssh/sshd_config
+#    block: |
+#      Match User ansible-agent
+#      PasswordAuthentication no
+#
+
+#Run command on remote host
+#- name: Remove default apache2 index.html file
+#become: yes
+#ignore_errors: yes
+#command: rm /var/www/html/index.html
+
+#Copy file from local machine to remote machine
+#- name: Upload default index.php for host 
+#  become: yes
+#copy: src=files/index.php dest=/var/www/html/ mode=0644  
+
+#Restart something
+#- name: Restart webserver
+#  become: yes
+#service: name=apache2 state=restarted
